@@ -38,7 +38,7 @@ DEBUG = True
 if ENVIRONMENT == 'local':
     ALLOWED_HOSTS = ['localhost']
 elif ENVIRONMENT == 'production':
-    ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','elizabethgeorge.zitto.co.ke',private_ip]
+    ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','172.31.16.5','elizabethgeorge.zitto.co.ke',private_ip]
 
 # Application definition
 
