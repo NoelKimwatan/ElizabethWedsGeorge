@@ -28,16 +28,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['SECRET_KEY']
 ENVIRONMENT = os.environ['ENVIRONMENT']
 
-if ENVIRONMENT == 'local':
-    private_ip = 'localhost'
-elif ENVIRONMENT == 'production':
+if ENVIRONMENT == 'production':
     from elizabethandgeorge.settings_production import private_ip
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','elizabethgeorge.zitto.co.ke','localhost',private_ip]
 
+if ENVIRONMENT == 'local':
+    ALLOWED_HOSTS = ['localhost']
+elif ENVIRONMENT == 'production':
+    ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','elizabethgeorge.zitto.co.ke',private_ip]
 
 # Application definition
 
