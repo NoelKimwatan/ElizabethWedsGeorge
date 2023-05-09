@@ -25,12 +25,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ['SECRET_KEY']
+ENVIRONMENT = os.environ['ENVIRONMENT']
+
+if ENVIRONMENT == 'local':
+    private_ip = 'localhost'
+elif ENVIRONMENT == 'production':
+    from elizabethandgeorge.settings_production import private_ip
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','172.31.16.5']
+ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','localhost',private_ip]
 
 
 # Application definition
@@ -80,16 +86,25 @@ WSGI_APPLICATION = "elizabethandgeorge.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('DB_NAME'), 
-        'USER': os.environ.get('DB_USERNAME'), 
-        'PASSWORD': os.environ.get('DB_PASSWORD'), 
-        'HOST': os.environ.get('DB_ENDPOINT'), 
-        'PORT': '5432',
+if ENVIRONMENT == 'production':
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ.get('DB_NAME'), 
+            'USER': os.environ.get('DB_USERNAME'), 
+            'PASSWORD': os.environ.get('DB_PASSWORD'), 
+            'HOST': os.environ.get('DB_ENDPOINT'), 
+            'PORT': '5432',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
 
 # Password validation
@@ -141,20 +156,20 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 ##Pesapal integration
-PESAPAL_AUTHENTICATION_URL = os.environ.get('PEASAPAL_AUTHENTICATION_URL')
-PESAPAL_CONSUMER_KEY = os.environ.get('PESAPAL_CONSUMER_KEY')
-PESAPAL_CONSUMER_SECRET = os.environ.get('PESAPAL_CONSUMER_SECRET')
-PESAPAL_ORDER_REQUEST_URL = os.environ.get('PESAPAL_ORDER_REQUEST_URL')
-PESAPAL_IPN_REGISTRATION_URL = os.environ.get('PESAPAL_IPN_REGISTRATION_URL')
-PESAPAL_GET_TRANSACTION_STATUS_URL = os.environ.get('PESAPAL_GET_TRANSACTION_STATUS_URL')
+PESAPAL_AUTHENTICATION_URL = os.environ['PEASAPAL_AUTHENTICATION_URL']
+PESAPAL_CONSUMER_KEY = os.environ['PESAPAL_CONSUMER_KEY']
+PESAPAL_CONSUMER_SECRET = os.environ['PESAPAL_CONSUMER_SECRET']
+PESAPAL_ORDER_REQUEST_URL = os.environ['PESAPAL_ORDER_REQUEST_URL']
+PESAPAL_IPN_REGISTRATION_URL = os.environ['PESAPAL_IPN_REGISTRATION_URL']
+PESAPAL_GET_TRANSACTION_STATUS_URL = os.environ['PESAPAL_GET_TRANSACTION_STATUS_URL']
 
 
 
 #s3 sTATIC STORAGE
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+AWS_S3_REGION_NAME = os.environ['AWS_S3_REGION_NAME']
+AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 
 # Tell django-storages the domain to use to refer to static files.
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
