@@ -30,7 +30,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','172.31.16.5']
 
 
 # Application definition
@@ -81,9 +81,13 @@ WSGI_APPLICATION = "elizabethandgeorge.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('DB_NAME'), 
+        'USER': os.environ.get('DB_USERNAME'), 
+        'PASSWORD': os.environ.get('DB_PASSWORD'), 
+        'HOST': os.environ.get('DB_ENDPOINT'), 
+        'PORT': '5432',
     }
 }
 
