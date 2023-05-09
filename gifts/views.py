@@ -70,7 +70,12 @@ def process_payment(request):
                 "phone_number": customer_phone
             }
 
-            unique_id = gift_object.id + 498656259
+            try:
+                print("Gift object id ",gift_object.id);
+            except:
+                pass
+
+            unique_id = random.randint(1,999999999999999999999999999999999) + 498656259
             print("Unique order id: ",unique_id)
 
             order_request_payload = {
