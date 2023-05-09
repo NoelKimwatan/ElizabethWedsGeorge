@@ -36,7 +36,7 @@ elif ENVIRONMENT == 'production':
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','localhost',private_ip]
+ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','elizabethgeorge.zitto.co.ke','localhost',private_ip]
 
 
 # Application definition
