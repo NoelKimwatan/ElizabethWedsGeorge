@@ -4,6 +4,7 @@ from django.conf import settings
 import requests, json, random
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
+from elizabethandgeorge.settings import PESAPAL_CALLBACK_URL, PESAPAL_RESPONSE_URL
 
 # Create your views here.
 def index(request):
@@ -49,7 +50,7 @@ def process_payment(request):
             }
 
             ipn_registration_body = {
-                "url": "https://3d54-41-90-64-81.ngrok-free.app/payment_notification",
+                "url": PESAPAL_RESPONSE_URL,
                 "ipn_notification_type": "POST"
             }
 
@@ -77,7 +78,7 @@ def process_payment(request):
                 "currency": "KES",
                 "amount": constribution_amount,
                 "description": "Elizabeth weds George",
-                "callback_url": "https://3d54-41-90-64-81.ngrok-free.app",
+                "callback_url": PESAPAL_CALLBACK_URL,
                 "notification_id": ipn_id,
                 "billing_address": order_request_customer_address
             }
