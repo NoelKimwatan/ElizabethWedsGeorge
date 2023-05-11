@@ -1,0 +1,30 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Elizabeth weds George</title>
+    <link href="{% static 'bootstrap-5.3.0/css/bootstrap.min.css'  %}" rel="stylesheet">
+    <link href="{% static 'css/main.css'  %}" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container-fluid vh-100 vw-100">
+        <div class="position-relative vh-100 vw-100">
+            <div class="position-absolute top-50 start-50 translate-middle">
+                {% block content %}
+                {% endblock%}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
+        integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
+        crossorigin="anonymous"></script>
+    <script src="{% static 'bootstrap-5.3.0/js/bootstrap.min.js' %}" crossorigin="anonymous"></script>
+</body>
+
+</html>

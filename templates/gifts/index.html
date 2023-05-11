@@ -1,54 +1,39 @@
+{% extends "base.html" %}
 {% load static %}
-<!doctype html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <title>HTML5 Starter Template</title>
-    <meta name="description" content="Starter Template">
-    <link rel="stylesheet" href="css/styles.css?v=1.0">
-
-</head>
-
-<body>
-    <h1>Elizabeth weds George</h1>
-
-    <p>Thank you for</p>
-
-    <form id="contribution_form" action="{% url 'process_payment' %}" method="post">
-        {% csrf_token %}
-        <label for="fname">First name:</label>
-        <input type="text" id="fname" name="fname" required><br><br>
-
-        <label for="lname">Last name:</label>
-        <input type="text" id="lname" name="lname" required><br><br>
-
-        <label for="phone">Phone no:</label>
-        <input type="number" id="phone" name="phone" required><br><br>
-
-        <label for="email">Email:</label>
-        <input type="text" id="lname" name="email" required><br><br>
-
-        <label for="amount">Amount:</label>
-        <input type="number" id="amount" name="amount" required><br><br>
-
-        <label for="message">Please eneter your message for the couple:</label>
-        <textarea id="message" name="message" rows="4" cols="50" required></textarea>
 
 
-        <button type="submit" id="initiatePayment">Create payment</button>
-    </form>
+{% block content %}
+
+<div class="row">
+    <h4 class="text-center">
+        Enter your gift amount
+    </h4>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default">KES</span>
+            <input type="text" class="form-control" aria-label="Gift amount"
+                aria-describedby="inputGroup-sizing-default">
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <button type="button" class="btn btn-primary">Mpesa</button>
+    </div>
+
+    <div class="col">
+        <button type="button" class="btn btn-secondary">Card</button>
+    </div>
+</div>
 
 
 
+{% if redirect_url %}
+<iframe src="{{ redirect_url }}" title="description" width="1400" height="800"></iframe>
+{% endif %}
 
-
-    {% if redirect_url %}
-    <iframe src="{{ redirect_url }}" title="description" width="1400" height="800"></iframe>
-    {% endif %}
-
-
-    <script type="text/javascript" src="{% static 'js/javascript.js' %}"></script>
-</body>
-
-</html>
+{% endblock %}
