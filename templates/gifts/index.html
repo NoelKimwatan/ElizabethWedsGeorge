@@ -4,31 +4,62 @@
 
 {% block content %}
 
-<div class="row">
-    <h4 class="text-center">
-        Enter your gift amount
-    </h4>
-</div>
-
-<div class="row">
-    <div class="col-12">
-        <div class="input-group mb-3">
-            <span class="input-group-text" id="inputGroup-sizing-default">KES</span>
-            <input type="text" class="form-control" aria-label="Gift amount"
-                aria-describedby="inputGroup-sizing-default">
-        </div>
+<div class="row justify-content-center mt-5 mt-md-0 mb-3 mb-md-5">
+    <div class="col-10">
+        <h3 class="text-center">
+            Please enter your gift amount
+        </h3>
     </div>
 </div>
 
 <div class="row">
     <div class="col">
-        <button type="button" class="btn btn-primary">Mpesa</button>
-    </div>
 
-    <div class="col">
-        <button type="button" class="btn btn-secondary">Card</button>
+        <form id="giftsForm" action="{% url 'process_gift' %}" method="POST">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <label for="amount" class="col-sm-4 col-form-label">Amount</label>
+                <div class="col-sm-8">
+                    <input type="number" class="form-control" id="amount" name="giftAmount" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="phoneNo" class="col-sm-4 col-form-label">Phone no</label>
+                <div class="col-sm-8">
+                    <input type="number" class="form-control" id="phoneNo" name="phoneNo" required>
+                    <div class="invalid-feedback">Please a valid phone number</div>
+                    <div class="valid-feedback">Looks good!</div>
+                </div>
+            </div>
+            <fieldset class="row mb-4">
+                <div class="col">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="giftMethod" id="giftMethodId1" value="Mpesa"
+                            checked>
+                        <label class="form-check-label" for="giftMethodId1">
+                            Mpesa
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="giftMethod" id="giftMethodId2" value="Card">
+                        <label class="form-check-label" for="giftMethodId2">
+                            Card
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="row d-flex justicy_content-center">
+                <button type="submit" id="proceedButton" class="btn btn-primary">Proceed</button>
+            </div>
+
+        </form>
     </div>
 </div>
+
+
+
+
 
 
 

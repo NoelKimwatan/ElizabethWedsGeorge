@@ -8,11 +8,103 @@ from elizabethandgeorge.settings import PESAPAL_CALLBACK_URL, PESAPAL_RESPONSE_U
 
 # Create your views here.
 def index(request):
-    if request.method == "GET":
-        return render(request, "gifts/index.html")
-    elif request.method == "POST":
+    return render(request, "gifts/index.html")
+
+
+def process_gift(request):
+    if request.method == "POST":
+        amount = request.POST["giftAmount"]
+        phoneNo = request.POST["phoneNo"]
+        giftMethod = request.POST["giftMethod"]
+
+        print("Selected amount is {} and the phone number is {}. Finally the giftmethod is {}".format(amount,phoneNo,giftMethod))
+        if giftMethod == "Card":
+            return process_card(request,amount,phoneNo)
+        elif giftMethod == "Mpesa":
+            pass
+        else:
+            pass
+    else:
         pass
-    
+
+def process_card(request,amount,phoneNo):
+    gift_object = Gift(
+        phone_no = phoneNo,
+        amount =  amount,
+    )
+    gift_object.save()
+
+    request_response = generate_authentication_token()
+    if request_response['status'] == '200':
+        authentication_token = request_response['token']
+        # print("Authentication token: ",authentication_token)
+
+        authorization_token = "Bearer {}".format(authentication_token)
+
+        ipn_registration_header = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": authorization_token
+        }
+
+        ipn_registration_body = {
+            "url": PESAPAL_RESPONSE_URL,
+            "ipn_notification_type": "POST"
+        }
+
+        ipn_registration =requests.post(settings.PESAPAL_IPN_REGISTRATION_URL,headers = ipn_registration_header, data=json.dumps(ipn_registration_body)).json()
+        print("IPN regsitration response: ",ipn_registration)
+
+        ipn_id = ipn_registration["ipn_id"]
+        gift_object.ipn_id = ipn_id
+        gift_object.save()
+
+        # print("IPN registration id: ",ipn_id)
+
+        order_request_customer_address = {
+            "phone_number": phoneNo
+        }
+
+        try:
+            print("Gift object id ",gift_object.id);
+        except:
+            pass
+
+        unique_id = random.randint(1,999999999999999999999999999999999) + 498656259
+        print("Unique order id: ",unique_id)
+
+        order_request_payload = {
+            "id": unique_id ,
+            "currency": "KES",
+            "amount": amount,
+            "description": "Elizabeth weds George",
+            "callback_url": PESAPAL_CALLBACK_URL,
+            "notification_id": ipn_id,
+            "billing_address": order_request_customer_address
+        }
+
+        order_request_headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": authorization_token
+        }
+
+        order_request = requests.post(settings.PESAPAL_ORDER_REQUEST_URL,headers = order_request_headers, data=json.dumps(order_request_payload)).json()
+        
+
+        print("--------------------------------------------------------------------------------------------------------------------------------------")
+        print("Order request response: ",order_request)
+        print("--------------------------------------------------------------------------------------------------------------------------------------")
+        redirect_url = order_request['redirect_url']
+        order_tracking_id = order_request['order_tracking_id']
+
+        gift_object.order_tracking_id = order_tracking_id
+        gift_object.save()
+
+        context = {"redirect_url": redirect_url }
+        return render(request, "gifts/processing_payments.html",context)
+
 
 def process_payment(request):
     if request.method == "POST":
@@ -25,12 +117,8 @@ def process_payment(request):
         constribution_amount = request.POST["amount"]
 
         gift_object = Gift(
-            first_name = customer_fname,
-            last_name = customer_lname,
             phone_no = customer_phone,
-            email = customer_email,
             amount =  constribution_amount,
-            message = message
         )
         gift_object.save()
 

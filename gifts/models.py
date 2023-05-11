@@ -8,10 +8,8 @@ class Gift(models.Model):
         (4, "Completed")
     ]
 
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+
     phone_no = models.IntegerField()
-    email = models.CharField(max_length=100)
     amount =  models.IntegerField(blank=False, null=False)
     message = models.CharField(max_length=1000)
     payment_method = models.CharField(max_length=100, null=True)

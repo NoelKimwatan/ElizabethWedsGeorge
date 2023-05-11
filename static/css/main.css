@@ -1,22 +1,38 @@
+@font-face {
+    font-family: "CustomFont";
+    src: url("../fonts/ArchitectsDaughter-Regular.ttf") format("ttf");
+}
+
+html,
+body {
+    font-family: 'CustomFont';
+    font-weight: normal;
+    font-style: normal;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+
 @media (max-width: 991.98px) {
     body {
         background-image: url('../images/elizabethandgeorge_2.jpeg');
-        height: 100vh;
+        width: 100vw;
         background-size: 100% 100%;
         background-repeat: no-repeat;
     }
 }
 
 
-/* `xxl` applies to x-large devices (large desktops, less than 1400px) */
+/*`xxl` applies to x-large devices (large desktops, less than 1400px) */
 @media (min-width: 991.98px) {
     body {
         background-image: url('../images/elizabethandgeorge_1.jpeg');
-        height: 100vh;
+        width: 100vw;
         background-size: 100% 100%;
         background-repeat: no-repeat;
     }
 }
+
 
 .red {
     background-color: red;

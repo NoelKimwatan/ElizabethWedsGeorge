@@ -5,5 +5,5 @@ from .models import *
 
 @admin.register(Gift)
 class GiftAdmin(admin.ModelAdmin):
-    list_display = ["id","first_name", "last_name", "amount", "status", "message" ]
+    list_display = ["id","phone_no", "amount", "status", "message" ]
 
