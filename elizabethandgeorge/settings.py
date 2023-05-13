@@ -87,7 +87,7 @@ WSGI_APPLICATION = "elizabethandgeorge.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if ENVIRONMENT == 'local':
+if ENVIRONMENT == 'production':
 
     DATABASES = {
         'default': {
