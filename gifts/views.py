@@ -4,17 +4,18 @@ from django.conf import settings
 import requests, json, random
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
-from elizabethandgeorge.settings import PESAPAL_CALLBACK_URL, PESAPAL_RESPONSE_URL
+from elizabethandgeorge.settings import PESAPAL_REDIRECT_URL, PESAPAL_RESPONSE_URL
 
 # Create your views here.
 def index(request):
     return render(request, "gifts/index.html")
-
+254710303667
 
 def process_gift(request):
     if request.method == "POST":
         amount = request.POST["giftAmount"]
         phoneNo = request.POST["phoneNo"]
+        phoneNo = phoneNo[-9:]
         giftMethod = request.POST["giftMethod"]
 
         print("Selected amount is {} and the phone number is {}. Finally the giftmethod is {}".format(amount,phoneNo,giftMethod))
@@ -66,12 +67,11 @@ def process_card(request,amount,phoneNo):
             "phone_number": phoneNo
         }
 
-        try:
-            print("Gift object id ",gift_object.id);
-        except:
-            pass
 
-        unique_id = random.randint(1,999999999999999999999999999999999) + 498656259
+        print("Gift object id ",gift_object.id)
+
+
+        unique_id = gift_object.id + 1000
         print("Unique order id: ",unique_id)
 
         order_request_payload = {
@@ -79,7 +79,7 @@ def process_card(request,amount,phoneNo):
             "currency": "KES",
             "amount": amount,
             "description": "Elizabeth weds George",
-            "callback_url": PESAPAL_CALLBACK_URL,
+            "callback_url": PESAPAL_REDIRECT_URL,
             "notification_id": ipn_id,
             "billing_address": order_request_customer_address
         }
@@ -103,7 +103,13 @@ def process_card(request,amount,phoneNo):
         gift_object.save()
 
         context = {"redirect_url": redirect_url }
-        return render(request, "gifts/processing_payments.html",context)
+        return render(request, "gifts/process_card.html",context)
+
+def gift_processed(request):
+    print("Request method", request.method)
+    context = {"request": request, "method": request.method}
+    return render(request,'gifts/gift_processed.html', context)
+
 
 
 def process_payment(request):
@@ -171,7 +177,7 @@ def process_payment(request):
                 "currency": "KES",
                 "amount": constribution_amount,
                 "description": "Elizabeth weds George",
-                "callback_url": PESAPAL_CALLBACK_URL,
+                "callback_url": PESAPAL_REDIRECT_URL,
                 "notification_id": ipn_id,
                 "billing_address": order_request_customer_address
             }

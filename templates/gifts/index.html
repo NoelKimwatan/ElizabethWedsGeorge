@@ -64,7 +64,9 @@
 
 
 {% if redirect_url %}
-<iframe src="{{ redirect_url }}" title="description" width="1400" height="800"></iframe>
+<div class="ratio ratio-16x9">
+    <iframe src="{{ redirect_url }}" title="Pesapal redirect" allowfullscreen></iframe>
+</div>
 {% endif %}
 
 {% endblock %}
