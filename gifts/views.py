@@ -135,7 +135,6 @@ def gift_message(request):
 
     return redirect('index')
 
-
 @csrf_exempt
 def payment_notification(request):
     payment_response = json.loads(request.body)
@@ -184,7 +183,6 @@ def payment_notification(request):
     print("Transaction status response: ",transaction_response)
 
     return redirect('index')
-
 
 def generate_authentication_token():
     pesapal_authentication_url = settings.PESAPAL_AUTHENTICATION_URL
