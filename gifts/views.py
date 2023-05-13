@@ -126,7 +126,7 @@ def gift_processed(request):
     return render(request,'gifts/gift_processed.html', context)
 
 def gift_message(request):
-    order_tracking_id = request.POST["order_tracking_id"]
+    order_tracking_id = request.POST["order_tracking_id_number"]
     message = request.POST["giftMessage"]
 
     gift_object = Gift.objects.get(order_tracking_id=order_tracking_id)
