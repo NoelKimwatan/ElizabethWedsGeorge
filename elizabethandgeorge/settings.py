@@ -87,7 +87,7 @@ WSGI_APPLICATION = "elizabethandgeorge.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if ENVIRONMENT == 'production':
+if ENVIRONMENT == 'local':
 
     DATABASES = {
         'default': {
@@ -163,7 +163,7 @@ PESAPAL_CONSUMER_SECRET = os.environ['PESAPAL_CONSUMER_SECRET']
 PESAPAL_ORDER_REQUEST_URL = os.environ['PESAPAL_ORDER_REQUEST_URL']
 PESAPAL_IPN_REGISTRATION_URL = os.environ['PESAPAL_IPN_REGISTRATION_URL']
 PESAPAL_GET_TRANSACTION_STATUS_URL = os.environ['PESAPAL_GET_TRANSACTION_STATUS_URL']
-PESAPAL_REDIRECT_URL = os.environ['PESAPAL_CALLBACK_URL']
+PESAPAL_REDIRECT_URL = os.environ['PESAPAL_REDIRECT_URL']
 PESAPAL_RESPONSE_URL = os.environ['PESAPAL_RESPONSE_URL']
 
 #s3 sTATIC STORAGE
