@@ -125,13 +125,19 @@ def gift_processed(request):
     }
     return render(request,'gifts/gift_processed.html', context)
 
-def gift_message(request):
-    order_tracking_id = request.POST["order_tracking_id_number"]
-    message = request.POST["giftMessage"]
 
-    gift_object = Gift.objects.get(order_tracking_id=order_tracking_id)
-    gift_object.message = message
-    gift_object.save()
+def gift_message(request):
+    # print(dict(request.POST.items()))
+    try:
+        order_tracking_id = request.POST["order_tracking_id"]
+        # print("Order tracking id: ",order_tracking_id)
+        message = request.POST["giftMessage"]
+        # print("Message: ",message)
+        gift_object = Gift.objects.get(order_tracking_id=order_tracking_id)
+        gift_object.message = message
+        gift_object.save()
+    except:
+        pass
 
     return redirect('index')
 
