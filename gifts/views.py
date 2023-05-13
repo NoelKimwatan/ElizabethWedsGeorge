@@ -9,7 +9,6 @@ from elizabethandgeorge.settings import PESAPAL_REDIRECT_URL, PESAPAL_RESPONSE_U
 # Create your views here.
 def index(request):
     return render(request, "gifts/index.html")
-254710303667
 
 def process_gift(request):
     if request.method == "POST":
@@ -106,10 +105,85 @@ def process_card(request,amount,phoneNo):
         return render(request, "gifts/process_card.html",context)
 
 def gift_processed(request):
-    print("Request method", request.method)
-    context = {"request": request, "method": request.method}
+    order_tracking_id = request.GET["OrderTrackingId"]
+    gift_object = Gift.objects.get(order_tracking_id=order_tracking_id)
+
+
+    context = {
+        "status": gift_object.status,
+        "phone": gift_object.phone_no
+    }
     return render(request,'gifts/gift_processed.html', context)
 
+
+@csrf_exempt
+def payment_notification(request):
+    payment_response = json.loads(request.body)
+    payment_order_tracking_id = payment_response['OrderTrackingId']
+    print("Payment notification: ",payment_response)
+
+    #----Check payment------
+    request_response = generate_authentication_token()
+    authentication_token = request_response['token']
+
+    pesapal_get_transaction_status_url = settings.PESAPAL_GET_TRANSACTION_STATUS_URL
+
+    transaction_status_header = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": authentication_token
+    }
+
+    get_transaction_status_params = {
+        "orderTrackingId": payment_order_tracking_id
+    }
+
+    transaction_response =  requests.get(
+        pesapal_get_transaction_status_url,
+        params = get_transaction_status_params, 
+        headers= transaction_status_header
+    ).json()
+
+    print("Check Transaction status response: ",transaction_response)
+
+    gift_object = Gift.objects.get(order_tracking_id=payment_order_tracking_id)
+
+    gift_object.payment_method = transaction_response["payment_method"]
+    gift_object.amount = transaction_response["amount"]
+    gift_object.currency = transaction_response["currency"]
+
+    payment_status_description = transaction_response["payment_status_description"]
+
+    if payment_status_description == "Completed":
+        gift_object.status = 4
+    elif payment_status_description == "Failed":
+        gift_object.status = 2
+
+    gift_object.save()
+
+    print("Transaction status response: ",transaction_response)
+
+    return redirect('index')
+
+
+def generate_authentication_token():
+    pesapal_authentication_url = settings.PESAPAL_AUTHENTICATION_URL
+    pesapal_consumer_key = settings.PESAPAL_CONSUMER_KEY
+    pesapal_consumer_secret = settings.PESAPAL_CONSUMER_SECRET
+
+
+    request_payload = {
+        "consumer_key": pesapal_consumer_key,
+        "consumer_secret": pesapal_consumer_secret
+    }
+
+    request_headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    }
+
+    request_response = requests.post(pesapal_authentication_url, headers=request_headers, data=json.dumps(request_payload)).json()
+    return request_response
 
 
 def process_payment(request):
@@ -204,74 +278,3 @@ def process_payment(request):
             return render(request, "gifts/processing_payments.html",context)
     else:
         pass
-
-@csrf_exempt
-def payment_notification(request):
-    payment_response = json.loads(request.body)
-    payment_order_tracking_id = payment_response['OrderTrackingId']
-    print("Payment notification: ",payment_response)
-
-    #----Check payment------
-    request_response = generate_authentication_token()
-    authentication_token = request_response['token']
-
-    pesapal_get_transaction_status_url = settings.PESAPAL_GET_TRANSACTION_STATUS_URL
-
-    transaction_status_header = {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Authorization": authentication_token
-    }
-
-    get_transaction_status_params = {
-        "orderTrackingId": payment_order_tracking_id
-    }
-
-    transaction_response =  requests.get(
-        pesapal_get_transaction_status_url,
-        params = get_transaction_status_params, 
-        headers= transaction_status_header
-    ).json()
-
-    print("Check Transaction status response: ",transaction_response)
-
-    gift_object = Gift.objects.get(order_tracking_id=payment_order_tracking_id)
-
-    gift_object.payment_method = transaction_response["payment_method"]
-    gift_object.amount = transaction_response["amount"]
-    gift_object.currency = transaction_response["currency"]
-
-    payment_status_description = transaction_response["payment_status_description"]
-
-    if payment_status_description == "Completed":
-        gift_object.status = 4
-    elif payment_status_description == "Failed":
-        gift_object.status = 2
-
-    gift_object.save()
-
-    print("Transaction status response: ",transaction_response)
-
-    return redirect('index')
-
-
-def generate_authentication_token():
-    pesapal_authentication_url = settings.PESAPAL_AUTHENTICATION_URL
-    pesapal_consumer_key = settings.PESAPAL_CONSUMER_KEY
-    pesapal_consumer_secret = settings.PESAPAL_CONSUMER_SECRET
-
-
-    request_payload = {
-        "consumer_key": pesapal_consumer_key,
-        "consumer_secret": pesapal_consumer_secret
-    }
-
-    request_headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    }
-
-    request_response = requests.post(pesapal_authentication_url, headers=request_headers, data=json.dumps(request_payload)).json()
-    return request_response
-
-
