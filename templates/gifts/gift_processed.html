@@ -3,10 +3,48 @@
 
 
 {% block content %}
-<h1>Your gift has been received</h1>
-Method: {{status}}
-Phone: {{phone}}
 
-context
+
+<!-- Success -->
+{% if status == 4%}
+<div class="row">
+    <h1 class="text-center mb-4">{{message}}</h1>
+</div>
+
+<div class="row">
+    <div class="col-12 p-0">
+        <form id="giftsMessage" action="{% url 'process_gift' %}" method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="mb-3 p-0">
+                    <label for="giftMessage" class="form-label">Write a message for the couple here</label>
+                    <textarea class="form-control m-0" name="giftMessage" id="giftMessage" rows="3"></textarea>
+                </div>
+
+                <input type="text" value="{{order_tracking_id}}" id="disabledTextInput" class="form-control"
+                    placeholder="Disabled input" name="order_tracking_id" disabled hidden>
+            </div>
+
+            <div class="row justify-content-end m-0">
+                <div class="col-4">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+
+
+
+
+
+        </form>
+    </div>
+</div>
+
+{% else %}
+<h1>{{message}}</h1>
+
+{% endif %}
+
+
+
 
 {% endblock %}

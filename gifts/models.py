@@ -4,7 +4,6 @@ class Gift(models.Model):
     STATUS_CHOICES = [
         (1, "Created"),
         (2, "Failed"),
-        (3, "Processing"),
         (4, "Completed")
     ]
 

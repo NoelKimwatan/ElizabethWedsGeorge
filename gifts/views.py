@@ -108,12 +108,32 @@ def gift_processed(request):
     order_tracking_id = request.GET["OrderTrackingId"]
     gift_object = Gift.objects.get(order_tracking_id=order_tracking_id)
 
+    message = str()
+
+    #Transaction complete
+    if gift_object.status == 4:
+        message = "Thank you. Your gift has been received"
+    elif gift_object.status == 2:
+        message = "Transaction rejected. Please try again"
+    elif gift_object.status == 1:
+        message = "Your transaction is being processed"
 
     context = {
         "status": gift_object.status,
-        "phone": gift_object.phone_no
+        "message": message,
+        "order_tracking_id": order_tracking_id
     }
     return render(request,'gifts/gift_processed.html', context)
+
+def gift_message(request):
+    order_tracking_id = request.POST["order_tracking_id"]
+    message = request.POST["giftMessage"]
+
+    gift_object = Gift.objects.get(order_tracking_id=order_tracking_id)
+    gift_object.message = message
+    gift_object.save()
+
+    return redirect('index')
 
 
 @csrf_exempt

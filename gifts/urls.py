@@ -9,4 +9,5 @@ urlpatterns = [
     path("process_payment", views.process_payment, name="process_payment"),
     path("payment_notification", views.payment_notification, name="payment_notification"),
     path("gift_processed", views.gift_processed, name="gift_processed"),
+    path("gift_message", views.gift_message, name="gift_message")
 ]
