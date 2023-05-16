@@ -113,7 +113,7 @@ def gift_processed(request):
     message = str()
 
     #Transaction complete
-    if gift_object.status == 4:
+    if gift_object.status == 3:
         message = "Thank you. Your gift has been received"
     elif gift_object.status == 2:
         message = "Transaction rejected. Please try again"
