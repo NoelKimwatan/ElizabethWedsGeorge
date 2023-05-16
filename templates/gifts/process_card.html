@@ -3,8 +3,21 @@
 
 
 {% block content %}
-<div class="h-100 w-100">
-    <iframe src="{{ redirect_url }}" height="100%" width="100%" title="Pesapal redirect" allowfullscreen>
-    </iframe>
+<div class="h-100 w-100 d-flex align-items-center justify-content-center">
+
+    <div class="row h-100 w-100 d-none" id="pesaPalIframe">
+        <div class="col-12 h-100 w-100 p-0">
+            <iframe src="{{ redirect_url }}" onload="pesaPalIframeLoad()" height="100%" width="100%"
+                title="Pesapal redirect" allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+
+    <div class="row d-block h-75 d-flex justify-content-center align-items-center" id="loadingMessage">
+        <div class="col-12 d-flex">
+            <img class="" src="{% static 'images/LoadingTransparent.gif' %}" alt="Loading GID" width="250" />
+        </div>
+    </div>
 </div>
 {% endblock %}

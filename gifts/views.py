@@ -13,6 +13,8 @@ def index(request):
 def process_gift(request):
     if request.method == "POST":
         amount = request.POST["giftAmount"]
+        amount = int(float(amount.replace(',', '')))
+
         phoneNo = request.POST["phoneNo"]
         phoneNo = phoneNo[-9:]
         giftMethod = request.POST["giftMethod"]
@@ -116,7 +118,7 @@ def gift_processed(request):
     elif gift_object.status == 2:
         message = "Transaction rejected. Please try again"
     elif gift_object.status == 1:
-        message = "Your transaction is being processed"
+        message = "Thank you. Your transaction is being processed"
 
     context = {
         "status": gift_object.status,
@@ -125,7 +127,7 @@ def gift_processed(request):
     }
     return render(request,'gifts/gift_processed.html', context)
 
-
+@csrf_exempt
 def gift_message(request):
     # print(dict(request.POST.items()))
     try:
@@ -180,7 +182,7 @@ def payment_notification(request):
     payment_status_description = transaction_response["payment_status_description"]
 
     if payment_status_description == "Completed":
-        gift_object.status = 4
+        gift_object.status = 3
     elif payment_status_description == "Failed":
         gift_object.status = 2
 
