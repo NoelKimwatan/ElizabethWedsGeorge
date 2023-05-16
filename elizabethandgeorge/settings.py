@@ -88,7 +88,6 @@ WSGI_APPLICATION = "elizabethandgeorge.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 if ENVIRONMENT == 'production':
-
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -166,6 +165,19 @@ PESAPAL_GET_TRANSACTION_STATUS_URL = os.environ['PESAPAL_GET_TRANSACTION_STATUS_
 PESAPAL_REDIRECT_URL = os.environ['PESAPAL_REDIRECT_URL']
 PESAPAL_RESPONSE_URL = os.environ['PESAPAL_RESPONSE_URL']
 
+#Mpesa credentials
+MPESA_CONSUMER_KEY = os.environ['MPESA_CONSUMER_KEY']
+MPESA_CONSUMER_SECRET = os.environ['MPESA_CONSUMER_SECRET']
+MPESA_BUSINESS_SHORT_CODE = os.environ['MPESA_BUSINESS_SHORT_CODE']
+MPESA_LIPA_NA_MPESA_PASSKEY = os.environ['MPESA_LIPA_NA_MPESA_PASSKEY']
+MPESA_CALL_BACK_URL = os.environ['MPESA_CALL_BACK_URL']
+
+MPESA_ACCESS_TOKEN_API_URL = os.environ['MPESA_ACCESS_TOKEN_API_URL']
+MPESA_PROCESS_REQUEST_API_URL = os.environ['MPESA_PROCESS_REQUEST_API_URL']
+MPESA_B2C_PROXY_URL = os.environ['MPESA_B2C_PROXY_URL']
+
+
+
 #s3 sTATIC STORAGE
 AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
 AWS_S3_REGION_NAME = os.environ['AWS_S3_REGION_NAME']
@@ -181,7 +193,7 @@ AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 if ENVIRONMENT == 'production':
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
 SUPERUSER_USERNAME = os.environ['SUPERUSER_USERNAME']

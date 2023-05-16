@@ -4,7 +4,12 @@ from django.conf import settings
 import requests, json, random
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
-from elizabethandgeorge.settings import PESAPAL_REDIRECT_URL, PESAPAL_RESPONSE_URL
+from elizabethandgeorge.settings import PESAPAL_REDIRECT_URL, PESAPAL_RESPONSE_URL, MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET , MPESA_BUSINESS_SHORT_CODE, MPESA_LIPA_NA_MPESA_PASSKEY, MPESA_PROCESS_REQUEST_API_URL, MPESA_ACCESS_TOKEN_API_URL, MPESA_CALL_BACK_URL
+from requests.auth import HTTPBasicAuth 
+from datetime import *
+from django.utils import timezone
+import base64
+
 
 # Create your views here.
 def index(request):
@@ -23,11 +28,78 @@ def process_gift(request):
         if giftMethod == "Card":
             return process_card(request,amount,phoneNo)
         elif giftMethod == "Mpesa":
-            pass
+            return process_mpesa(request,amount,phoneNo)
         else:
             pass
     else:
         pass
+
+def process_mpesa(request,amount,phoneNo):
+    gift_object = Gift(
+        phone_no = phoneNo,
+        amount =  amount,
+    )
+    gift_object.save()
+
+    phoneNumber = "254" + phoneNo
+    accountReference = "ElizabethWedsGeorge" + phoneNo[-3:]
+
+    print("Stripped phone number",phoneNumber)
+
+    access_token_api_URL = settings.MPESA_ACCESS_TOKEN_API_URL
+    stk_push_api_URL = settings.MPESA_PROCESS_REQUEST_API_URL
+
+    r = requests.get(access_token_api_URL, auth=HTTPBasicAuth(MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET))
+    print("R response",r.json)
+    input_access_token = r.json()["access_token"] 
+    print("Input access token",input_access_token)
+
+    print("Time now:",timezone.now())
+    Timestamp = timezone.now().strftime("%Y%m%d%H%M%S")
+    print("Time Stamp",Timestamp)
+    Data_to_encode = MPESA_BUSINESS_SHORT_CODE + MPESA_LIPA_NA_MPESA_PASSKEY + Timestamp
+    Encoded_data = base64.b64encode(Data_to_encode.encode())
+    Decoded_data = Encoded_data.decode("utf8")
+    print("Password",Decoded_data)
+
+    #Create Mpesa lipa na mpesa
+    access_token = input_access_token
+    api_url = MPESA_PROCESS_REQUEST_API_URL
+    headers = { "Authorization": "Bearer %s" % access_token }
+    mpesa_request = {
+        "BusinessShortCode": MPESA_BUSINESS_SHORT_CODE ,
+        "Password": Decoded_data,
+        "Timestamp": Timestamp,
+        "TransactionType": "CustomerPayBillOnline",
+        "Amount": amount,
+        "PartyA": phoneNumber, 
+        "PartyB": MPESA_BUSINESS_SHORT_CODE, 
+        "PhoneNumber": phoneNumber, 
+        "CallBackURL": MPESA_CALL_BACK_URL,
+        "AccountReference": accountReference,
+        "TransactionDesc": "ElizabethwedsGeorge"
+    }
+
+    response_data = requests.post(api_url, json = mpesa_request, headers=headers).json()
+
+
+
+    print("Mpesa response data: ",response_data)
+
+
+    tracking_id = response_data["CheckoutRequestID"]
+
+    gift_object.order_tracking_id = tracking_id
+    gift_object.save()
+
+    context = {}
+    print("Application has reached at the end")
+    return render(request,"gifts/process_mpesa.html")
+
+
+
+
+
 
 def process_card(request,amount,phoneNo):
     gift_object = Gift(
