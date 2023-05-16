@@ -12,6 +12,11 @@ body {
     overflow-x: hidden;
 }
 
+.pesaPalIframe {
+    background-image: url('../images/LoadingTransparent.gif');
+    background-color: red;
+}
+
 
 @media (max-width: 991.98px) {
     body {

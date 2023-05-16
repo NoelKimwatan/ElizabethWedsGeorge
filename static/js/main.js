@@ -1,25 +1,20 @@
 const giftForm = document.getElementById("giftsForm")
 const proceedButton = document.getElementById("proceedButton")
 const phoneNoInput = document.getElementById("phoneNo")
-const pesaPalIframe = document.getElementById("pesaPalIframe")
-const loadingMessage = document.getElementById("loadingMessage")
 
-const phoneNoInputInvalid = phoneNoInput.classList.contains("is-invalid");
+const loadingMessage = document.getElementById("loadingMessage")
+const amountInput = document.getElementById("amountInput")
+
 
 
 giftForm.addEventListener("submit", paymentformSubmit);
 phoneNoInput.addEventListener("change", phoneInputChange);
+amountInput.addEventListener("blur", use_text)
+amountInput.addEventListener("focus", use_number)
 
 
 
-function pesaPalIframeLoad() {
-    pesaPalIframe.classList.remove("d-none");
-    pesaPalIframe.classList.add("d-block");
 
-
-    loadingMessage.classList.remove("d-block");
-    loadingMessage.classList.add("d-none");
-}
 
 function phoneInputChange() {
     const phoneNo = document.getElementById("phoneNo").value
@@ -53,7 +48,10 @@ function paymentformSubmit(event) {
 }
 
 
-function use_number(node) {
+function use_number(e) {
+    console.log("Event", e);
+    node = e.srcElement;
+
     var empty_val = false;
     const value = node.value;
     if (node.value == '')
@@ -63,7 +61,10 @@ function use_number(node) {
         node.value = Number(value.replace(/,/g, '')); // or equivalent per locale
 }
 
-function use_text(node) {
+function use_text(e) {
+    console.log("Event", e);
+    node = e.srcElement;
+
     var empty_val = false;
     const value = Number(node.value);
     if (node.value == '')
