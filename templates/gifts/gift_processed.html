@@ -7,12 +7,14 @@
 
 <!-- Success -->
 {% if status == 3 or status == 1 %}
-<div class="row">
-    <h1 class="text-center mb-4">{{message}}</h1>
+<div class="row mb-4 d-flex justify-content-center">
+    <div class="col-12 col-md-8">
+        <h1 class="text-center">{{message}}</h1>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-12 p-0">
+<div class="row d-flex justify-content-center">
+    <div class="col-12 col-md-8 p-0">
         <form id="giftsMessage" action="{% url 'gift_message' %}" method="POST">
             {% csrf_token %}
             <div class="row">
@@ -25,8 +27,8 @@
                     name="order_tracking_id" hidden>
             </div>
 
-            <div class="row justify-content-end m-0">
-                <div class="col-4">
+            <div class="row d-flex justify-content-end m-0">
+                <div class="col-4 d-flex justify-content-end p-0">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </div>

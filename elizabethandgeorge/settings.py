@@ -36,7 +36,7 @@ DEBUG = True
 
 
 if ENVIRONMENT == 'local':
-    ALLOWED_HOSTS = ['localhost','9536-41-90-69-123.ngrok-free.app']
+    ALLOWED_HOSTS = ['localhost','27b4-41-90-70-251.ngrok-free.app']
 elif ENVIRONMENT == 'production':
     ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','172.31.16.5','elizabethgeorge.zitto.co.ke',private_ip]
 

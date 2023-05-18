@@ -76,9 +76,9 @@ def process_mpesa(request,amount,phoneNo):
         "PartyA": phoneNumber, 
         "PartyB": MPESA_BUSINESS_SHORT_CODE, 
         "PhoneNumber": phoneNumber, 
-        "CallBackURL": MPESA_CALL_BACK_URL,
+        "CallBackURL": MPESA_CALL_BACK_URL ,
         "AccountReference": accountReference,
-        "TransactionDesc": "EandG"
+        "TransactionDesc": "Ratanga"
     }
 
 
@@ -93,11 +93,12 @@ def process_mpesa(request,amount,phoneNo):
     tracking_id = response_data["CheckoutRequestID"]
     print("Tracking id", tracking_id)
 
-    gift_object.order_tracking_id = tracking_id
+    gift_object.ipn_id = tracking_id
+    gift_object.order_tracking_id = gift_object.id
     gift_object.save()
 
     context = {
-        'order_tracking_id': tracking_id,
+        'order_tracking_id': gift_object.id,
         "phoneNo": phoneNo,
         "amount": amount
         }
@@ -210,8 +211,8 @@ def gift_processed(request):
             return redirect("index")
         elif action == "Proceed":
             time.sleep(2)
-            order_tracking_id = request.POST["OrderTrackingId"]
-            gift_object = Gift.objects.get(order_tracking_id=order_tracking_id)
+            order_tracking_id = request.POST["order_tracking_id"]
+            gift_object = Gift.objects.get(id=order_tracking_id)
 
             #Transaction complete
             if gift_object.status == 3:
@@ -252,7 +253,7 @@ def mpesa_notification(request):
         CheckoutId = data["Body"]["stkCallback"]["CheckoutRequestID"]
         ResultsCode = data["Body"]["stkCallback"]["ResultCode"]
 
-        gift_object = Gift.objects.get(order_tracking_id=CheckoutId)
+        gift_object = Gift.objects.get(ipn_id=CheckoutId)
 
         if ResultsCode == 0:
             try:
@@ -285,7 +286,12 @@ def mpesa_notification(request):
             gift_object.ipn_id = Mpesa_message
             gift_object.save()
 
-        return redirect("index")
+        returned_data =  {
+            "status": 200,
+            "message": "Success"
+            }
+
+        return returned_data
     else:
         #Redirect error
         pass
