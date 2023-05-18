@@ -286,12 +286,9 @@ def mpesa_notification(request):
             gift_object.ipn_id = Mpesa_message
             gift_object.save()
 
-        returned_data =  {
-            "status": 200,
-            "message": "Success"
-            }
 
-        return returned_data
+
+        return redirect('index')
     else:
         #Redirect error
         pass
