@@ -4,7 +4,7 @@ from django.conf import settings
 import requests, json, random
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
-from elizabethandgeorge.settings import PESAPAL_REDIRECT_URL, PESAPAL_RESPONSE_URL, MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET , MPESA_BUSINESS_SHORT_CODE, MPESA_LIPA_NA_MPESA_PASSKEY, MPESA_PROCESS_REQUEST_API_URL, MPESA_ACCESS_TOKEN_API_URL, MPESA_CALL_BACK_URL, MPESA_TRANSACTION_DESC
+from elizabethandgeorge.settings import PESAPAL_REDIRECT_URL, PESAPAL_RESPONSE_URL, MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET , MPESA_BUSINESS_SHORT_CODE, MPESA_LIPA_NA_MPESA_PASSKEY, MPESA_PROCESS_REQUEST_API_URL, MPESA_ACCESS_TOKEN_API_URL, MPESA_CALL_BACK_URL
 from requests.auth import HTTPBasicAuth 
 from datetime import *
 from django.utils import timezone
