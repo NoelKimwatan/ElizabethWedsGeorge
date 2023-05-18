@@ -1,11 +1,35 @@
-{% extends "pesapalBase.html" %}
+{% extends "base.html" %}
 {% load static %}
 
 
 {% block content %}
-<div class="h-100 w-100 d-flex align-items-center justify-content-center">
 
-    <h1>You Mpesa transaction is being processed</h1>
+<form action="{% url 'gift_processed' %}" method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col">
+            <h3 class="text-center p-2">Your transaction is being processed</h3>
 
-</div>
+            <p>Please eneter your Mpesa pin on the STK push sent to your phone</p>
+
+            <input name="OrderTrackingId" value="{{order_tracking_id}}">
+            <input name="phoneNo" value="{{phoneNo}}">
+            <input name="amount" value="{{amount}}">
+
+
+            <div class="row pt-4">
+                <div class="col d-flex justify-content-between">
+                    <button type="submit" class="btn btn-danger" name="submitButton" value="Back">Back</button>
+                    <button type="submit" class="btn btn-success" name="submitButton" value="Proceed">Proceed</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</form>
+
+
+
+
 {% endblock %}

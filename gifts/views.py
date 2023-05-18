@@ -8,6 +8,7 @@ from elizabethandgeorge.settings import PESAPAL_REDIRECT_URL, PESAPAL_RESPONSE_U
 from requests.auth import HTTPBasicAuth 
 from datetime import *
 from django.utils import timezone
+import time
 import base64
 
 
@@ -50,17 +51,17 @@ def process_mpesa(request,amount,phoneNo):
     stk_push_api_URL = settings.MPESA_PROCESS_REQUEST_API_URL
 
     r = requests.get(access_token_api_URL, auth=HTTPBasicAuth(MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET))
-    print("R response",r.json)
+    # print("R response",r.json)
     input_access_token = r.json()["access_token"] 
-    print("Input access token",input_access_token)
+    # print("Input access token",input_access_token)
 
-    print("Time now:",timezone.now())
+    # print("Time now:",timezone.now())
     Timestamp = timezone.now().strftime("%Y%m%d%H%M%S")
-    print("Time Stamp",Timestamp)
+    # print("Time Stamp",Timestamp)
     Data_to_encode = MPESA_BUSINESS_SHORT_CODE + MPESA_LIPA_NA_MPESA_PASSKEY + Timestamp
     Encoded_data = base64.b64encode(Data_to_encode.encode())
     Decoded_data = Encoded_data.decode("utf8")
-    print("Password",Decoded_data)
+    # print("Password",Decoded_data)
 
     #Create Mpesa lipa na mpesa
     access_token = input_access_token
@@ -84,22 +85,22 @@ def process_mpesa(request,amount,phoneNo):
 
 
 
-    print("Mpesa response data: ",response_data)
+    # print("Mpesa response data: ",response_data)
 
 
     tracking_id = response_data["CheckoutRequestID"]
+    # print("Tracking id", tracking_id)
 
     gift_object.order_tracking_id = tracking_id
     gift_object.save()
 
-    context = {}
-    print("Application has reached at the end")
-    return render(request,"gifts/process_mpesa.html")
-
-
-
-
-
+    context = {
+        'order_tracking_id': tracking_id,
+        "phoneNo": phoneNo,
+        "amount": amount
+        }
+    # print("Application has reached at the end")
+    return render(request,"gifts/process_mpesa.html",context)
 
 def process_card(request,amount,phoneNo):
     gift_object = Gift(
@@ -179,25 +180,51 @@ def process_card(request,amount,phoneNo):
         return render(request, "gifts/process_card.html",context)
 
 def gift_processed(request):
-    order_tracking_id = request.GET["OrderTrackingId"]
-    gift_object = Gift.objects.get(order_tracking_id=order_tracking_id)
+    #Pesapal get redirect
+    if request.method == "GET":
+        order_tracking_id = request.GET["OrderTrackingId"]
+        gift_object = Gift.objects.get(order_tracking_id=order_tracking_id)
 
-    message = str()
+        message = str()
 
-    #Transaction complete
-    if gift_object.status == 3:
-        message = "Thank you. Your gift has been received"
-    elif gift_object.status == 2:
-        message = "Transaction rejected. Please try again"
-    elif gift_object.status == 1:
-        message = "Thank you. Your transaction is being processed"
+        #Transaction complete
+        if gift_object.status == 3:
+            message = "Thank you. Your gift has been received"
+        elif gift_object.status == 2:
+            message = "Transaction rejected. Please try again"
+        elif gift_object.status == 1:
+            message = "Thank you. Your transaction is being processed"
 
-    context = {
-        "status": gift_object.status,
-        "message": message,
-        "order_tracking_id": order_tracking_id
-    }
-    return render(request,'gifts/gift_processed.html', context)
+        context = {
+            "status": gift_object.status,
+            "message": message,
+            "order_tracking_id": order_tracking_id
+        }
+        return render(request,'gifts/gift_processed.html', context)
+    elif request.method == "POST":
+        action = request.POST["submitButton"]
+        
+        if action == "Back":
+            return redirect("index")
+        elif action == "Proceed":
+            time.sleep(2)
+            order_tracking_id = request.POST["OrderTrackingId"]
+            gift_object = Gift.objects.get(order_tracking_id=order_tracking_id)
+
+            #Transaction complete
+            if gift_object.status == 3:
+                message = "Thank you. Your gift has been received"
+            elif gift_object.status == 2:
+                message = "Transaction rejected. Please try again"
+            elif gift_object.status == 1:
+                message = "Thank you. Your transaction is being processed"
+
+            context = {
+                "status": gift_object.status,
+                "message": message,
+                "order_tracking_id": order_tracking_id
+            }
+            return render(request,'gifts/gift_processed.html', context)
 
 @csrf_exempt
 def gift_message(request):
@@ -216,10 +243,59 @@ def gift_message(request):
     return redirect('index')
 
 @csrf_exempt
+def mpesa_notification(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        print(data["Body"])
+        CheckoutId = data["Body"]["stkCallback"]["CheckoutRequestID"]
+        ResultsCode = data["Body"]["stkCallback"]["ResultCode"]
+
+        gift_object = Gift.objects.get(order_tracking_id=CheckoutId)
+
+        if ResultsCode == 0:
+            try:
+                Payed_Amount = data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][0]["Value"]
+                Mpesa_receiptnumber = data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][1]["Value"]
+                Mpesa_time = str(data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][3]["Value"])
+                Mpesa_phonenumber = data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][4]["Value"]
+                
+                Mpesa_date = datetime.strptime(Mpesa_time,"%Y%m%d%H%M%S")
+                Mpesa_message = data["Body"]["stkCallback"]["ResultDesc"]
+            except:
+                Payed_Amount = data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][0]["Value"]
+                Mpesa_receiptnumber = data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][1]["Value"]
+                Mpesa_time = str(data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][2]["Value"])
+                Mpesa_phonenumber = data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][3]["Value"]
+                
+                Mpesa_date = datetime.strptime(Mpesa_time,"%Y%m%d%H%M%S")
+                Mpesa_message = data["Body"]["stkCallback"]["ResultDesc"]
+
+            gift_object.status= 3
+            gift_object.payment_method = "MPESA"
+            gift_object.ipn_id = Mpesa_receiptnumber
+            gift_object.currency = "KES"
+            gift_object.amount = Payed_Amount
+            gift_object.save()
+        else:
+            Mpesa_message = data["Body"]["stkCallback"]["ResultDesc"]
+            gift_object.status= 2
+            gift_object.payment_method = "MPESA"
+            gift_object.ipn_id = Mpesa_message
+            gift_object.save()
+
+        return redirect("index")
+    else:
+        #Redirect error
+        pass
+
+
+@csrf_exempt
 def payment_notification(request):
     payment_response = json.loads(request.body)
     payment_order_tracking_id = payment_response['OrderTrackingId']
-    print("Payment notification: ",payment_response)
+    print("----------------------------------------------------------------")
+    print("Mpesa Payment notification: ",payment_response)
+    print("----------------------------------------------------------------")
 
     #----Check payment------
     request_response = generate_authentication_token()
@@ -264,6 +340,9 @@ def payment_notification(request):
 
     return redirect('index')
 
+
+
+
 def generate_authentication_token():
     pesapal_authentication_url = settings.PESAPAL_AUTHENTICATION_URL
     pesapal_consumer_key = settings.PESAPAL_CONSUMER_KEY
@@ -282,7 +361,6 @@ def generate_authentication_token():
 
     request_response = requests.post(pesapal_authentication_url, headers=request_headers, data=json.dumps(request_payload)).json()
     return request_response
-
 
 def process_payment(request):
     if request.method == "POST":
