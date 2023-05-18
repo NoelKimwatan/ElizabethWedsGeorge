@@ -36,7 +36,7 @@ DEBUG = True
 
 
 if ENVIRONMENT == 'local':
-    ALLOWED_HOSTS = ['localhost','51b4-41-90-69-152.ngrok-free.app']
+    ALLOWED_HOSTS = ['localhost','9536-41-90-69-123.ngrok-free.app']
 elif ENVIRONMENT == 'production':
     ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','172.31.16.5','elizabethgeorge.zitto.co.ke',private_ip]
 
@@ -175,7 +175,7 @@ MPESA_CALL_BACK_URL = os.environ['MPESA_CALL_BACK_URL']
 MPESA_ACCESS_TOKEN_API_URL = os.environ['MPESA_ACCESS_TOKEN_API_URL']
 MPESA_PROCESS_REQUEST_API_URL = os.environ['MPESA_PROCESS_REQUEST_API_URL']
 MPESA_B2C_PROXY_URL = os.environ['MPESA_B2C_PROXY_URL']
-
+MPESA_TRANSACTION_DESC = os.environ['MPESA_TRANSACTION_DESC']
 
 
 #s3 sTATIC STORAGE
@@ -193,7 +193,7 @@ AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 if ENVIRONMENT == 'production':
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
 SUPERUSER_USERNAME = os.environ['SUPERUSER_USERNAME']

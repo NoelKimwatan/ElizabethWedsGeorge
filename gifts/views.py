@@ -4,7 +4,7 @@ from django.conf import settings
 import requests, json, random
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
-from elizabethandgeorge.settings import PESAPAL_REDIRECT_URL, PESAPAL_RESPONSE_URL, MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET , MPESA_BUSINESS_SHORT_CODE, MPESA_LIPA_NA_MPESA_PASSKEY, MPESA_PROCESS_REQUEST_API_URL, MPESA_ACCESS_TOKEN_API_URL, MPESA_CALL_BACK_URL
+from elizabethandgeorge.settings import PESAPAL_REDIRECT_URL, PESAPAL_RESPONSE_URL, MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET , MPESA_BUSINESS_SHORT_CODE, MPESA_LIPA_NA_MPESA_PASSKEY, MPESA_PROCESS_REQUEST_API_URL, MPESA_ACCESS_TOKEN_API_URL, MPESA_CALL_BACK_URL, MPESA_TRANSACTION_DESC
 from requests.auth import HTTPBasicAuth 
 from datetime import *
 from django.utils import timezone
@@ -43,7 +43,7 @@ def process_mpesa(request,amount,phoneNo):
     gift_object.save()
 
     phoneNumber = "254" + phoneNo
-    accountReference = "ElizabethWedsGeorge" + phoneNo[-3:]
+    accountReference = "ElizabethWedsGeorge"
 
     print("Stripped phone number",phoneNumber)
 
@@ -78,18 +78,20 @@ def process_mpesa(request,amount,phoneNo):
         "PhoneNumber": phoneNumber, 
         "CallBackURL": MPESA_CALL_BACK_URL,
         "AccountReference": accountReference,
-        "TransactionDesc": "ElizabethwedsGeorge"
+        "TransactionDesc": "EandG"
     }
 
+
+    print("Mpesa request: ",mpesa_request)
     response_data = requests.post(api_url, json = mpesa_request, headers=headers).json()
 
 
 
-    # print("Mpesa response data: ",response_data)
+    print("Mpesa response data: ",response_data)
 
 
     tracking_id = response_data["CheckoutRequestID"]
-    # print("Tracking id", tracking_id)
+    print("Tracking id", tracking_id)
 
     gift_object.order_tracking_id = tracking_id
     gift_object.save()
