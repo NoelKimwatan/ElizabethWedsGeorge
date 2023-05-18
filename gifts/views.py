@@ -269,13 +269,12 @@ def mpesa_notification(request):
                 Mpesa_receiptnumber = data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][1]["Value"]
                 Mpesa_time = str(data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][2]["Value"])
                 Mpesa_phonenumber = data["Body"]["stkCallback"]["CallbackMetadata"]["Item"][3]["Value"]
-                
                 Mpesa_date = datetime.strptime(Mpesa_time,"%Y%m%d%H%M%S")
                 Mpesa_message = data["Body"]["stkCallback"]["ResultDesc"]
 
             gift_object.status= 3
             gift_object.payment_method = "MPESA"
-            gift_object.ipn_id = Mpesa_receiptnumber
+            gift_object.mpesa_reference = Mpesa_receiptnumber
             gift_object.currency = "KES"
             gift_object.amount = Payed_Amount
             gift_object.save()

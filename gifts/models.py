@@ -18,4 +18,5 @@ class Gift(models.Model):
     ipn_id = models.CharField(max_length=100, null=True)
     order_tracking_id = models.CharField(max_length=100, null=True)
     currency = models.CharField(max_length=10, null=True)
+    mpesa_reference = models.CharField(max_length=100, null=True)
 
