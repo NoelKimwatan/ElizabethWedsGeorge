@@ -148,7 +148,7 @@ def process_card(request,amount,phoneNo):
         print("Gift object id ",gift_object.id)
 
 
-        unique_id = gift_object.id + 1000
+        unique_id = gift_object.id + 2000
         print("Unique order id: ",unique_id)
 
         order_request_payload = {
@@ -185,7 +185,11 @@ def process_card(request,amount,phoneNo):
 def gift_processed(request):
     #Pesapal get redirect
     if request.method == "GET":
+        print("The request is a get request")
         order_tracking_id = request.GET["OrderTrackingId"]
+
+        check_card_transaction(order_tracking_id)
+
         gift_object = Gift.objects.get(order_tracking_id=order_tracking_id)
 
         message = str()
@@ -292,13 +296,55 @@ def mpesa_notification(request):
         #Redirect error
         pass
 
+def check_card_transaction(order_tracking_id):
+#----Check payment------
+    request_response = generate_authentication_token()
+    authentication_token = request_response['token']
+
+    pesapal_get_transaction_status_url = settings.PESAPAL_GET_TRANSACTION_STATUS_URL
+
+    transaction_status_header = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": authentication_token
+    }
+
+    get_transaction_status_params = {
+        "orderTrackingId": order_tracking_id
+    }
+
+    transaction_response =  requests.get(
+        pesapal_get_transaction_status_url,
+        params = get_transaction_status_params, 
+        headers= transaction_status_header
+    ).json()
+
+    print("Check Transaction status response: ",transaction_response)
+
+    gift_object = Gift.objects.get(order_tracking_id=order_tracking_id)
+
+    gift_object.payment_method = transaction_response["payment_method"]
+    gift_object.amount = transaction_response["amount"]
+    gift_object.currency = transaction_response["currency"]
+
+    payment_status_description = transaction_response["payment_status_description"]
+    print("Transaction description: ",payment_status_description)
+
+    if payment_status_description == "Completed":
+        gift_object.status = 3
+    elif payment_status_description == "Failed":
+        gift_object.status = 2
+
+    gift_object.save()
+
+    print("Transaction status response: ",transaction_response)
 
 @csrf_exempt
 def payment_notification(request):
     payment_response = json.loads(request.body)
     payment_order_tracking_id = payment_response['OrderTrackingId']
     print("----------------------------------------------------------------")
-    print("Mpesa Payment notification: ",payment_response)
+    print("Pesapal Payment notification: ",payment_response)
     print("----------------------------------------------------------------")
 
     #----Check payment------
