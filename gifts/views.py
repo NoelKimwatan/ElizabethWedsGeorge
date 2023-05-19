@@ -148,7 +148,7 @@ def process_card(request,amount,phoneNo):
         print("Gift object id ",gift_object.id)
 
 
-        unique_id = gift_object.id + 2000
+        unique_id = gift_object.id + 3232
         print("Unique order id: ",unique_id)
 
         order_request_payload = {
