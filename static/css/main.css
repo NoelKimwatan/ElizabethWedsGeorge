@@ -10,67 +10,50 @@ body {
     font-style: normal;
     max-width: 100%;
     overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .pesaPalIframe {
     background-image: url('../images/LoadingTransparent.gif');
-    background-color: red;
 }
 
-
-@media (max-width: 575.98px) {
+@media (max-width: 1100px) {
     body {
-        background-image: url('../images/phonePortrait.jpg');
-        width: 100vw;
-        background-size: 100% 100%;
+        background-image: url('../images/Phone portrait 1080 x 1920 px.jpg');
+        background-size: cover;
+        background-position: center center;
         background-repeat: no-repeat;
     }
 }
 
-@media (min-width: 575.99px) and (max-width: 720px) {
+
+
+@media (min-width: 1100px) {
     body {
-        background-image: url('../images/phoneLandscape.jpg');
-        width: 100vw;
-        background-size: 100% 100%;
+        background-image: url('../images/16 9 Desktop 1920 xx 1080 px.jpg');
+        background-size: cover;
+        background-position: center center;
         background-repeat: no-repeat;
     }
 }
 
-@media (min-width: 720px) and (max-width: 939px) {
-    body {
-        background-image: url('../images/Tablet Landscape 720 x 576 px.jpg');
-        width: 100vw;
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-    }
-}
 
-@media (min-width: 940px) and (max-width: 1200px) {
-    body {
-        background-image: url('../images/Tablet Landscape 940 x 788 px.jpg');
-        width: 100vw;
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-    }
-}
 
-@media (min-width: 1200px) and (max-width: 1920px) {
-    body {
-        background-image: url('../images/16 10 Portrait 1200 × 1980 px.jpg');
-        width: 100vw;
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-    }
-}
 
-@media (min-width: 1920px) {
+
+
+
+
+
+
+/* @media (min-width: 1200px) {
     body {
         background-image: url('../images/16 9 Desktop 1920 xx 1080 px.jpg');
         width: 100vw;
         background-size: 100% 100%;
         background-repeat: no-repeat;
     }
-}
+} */
 
 
 
