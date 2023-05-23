@@ -11,5 +11,6 @@ class GiftAdmin(admin.ModelAdmin):
 @admin.register(Error)
 class GiftAdmin(admin.ModelAdmin):
     list_display = ["id","request", "desciption"]
+    readonly_fields = ('time',)
 
 
