@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import *
 from elizabethandgeorge.settings import PESAPAL_REDIRECT_URL, PESAPAL_RESPONSE_URL, MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET , MPESA_BUSINESS_SHORT_CODE, MPESA_LIPA_NA_MPESA_PASSKEY, MPESA_PROCESS_REQUEST_API_URL, MPESA_ACCESS_TOKEN_API_URL, MPESA_CALL_BACK_URL
 from requests.auth import HTTPBasicAuth 
+from django.http import Http404
 from datetime import *
 from django.utils import timezone
 import time
@@ -293,8 +294,7 @@ def mpesa_notification(request):
 
         return redirect('index')
     else:
-        #Redirect error
-        pass
+         raise Http404
 
 def check_card_transaction(order_tracking_id):
 #----Check payment------
