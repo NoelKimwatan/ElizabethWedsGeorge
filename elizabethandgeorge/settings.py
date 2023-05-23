@@ -32,7 +32,7 @@ if ENVIRONMENT == 'production':
     from elizabethandgeorge.settings_production import private_ip
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 if ENVIRONMENT == 'local':
