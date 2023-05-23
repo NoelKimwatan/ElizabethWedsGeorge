@@ -6,8 +6,8 @@
 
 <form action="{% url 'gift_processed' %}" method="POST">
     {% csrf_token %}
-    <div class="row">
-        <div class="col">
+    <div class="row d-flex justify-content-center align-items-center">
+        <div class="col col-md-8">
             <h3 class="text-center p-2">Your transaction is being processed</h3>
 
             <p>Please eneter your Mpesa pin on the STK push sent to your phone before pressing proceed</p>
