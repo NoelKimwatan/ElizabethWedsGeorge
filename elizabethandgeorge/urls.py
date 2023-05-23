@@ -21,3 +21,9 @@ urlpatterns = [
     path("", include("gifts.urls")),
     path("admin/", admin.site.urls),
 ]
+
+handler404 = "gifts.views.handle_400_error_view"
+handler500 = "gifts.views.handle_error_view"
+handler403 = "gifts.views.handle_400_error_view"
+handler400 = "gifts.views.handle_400_error_view"
+

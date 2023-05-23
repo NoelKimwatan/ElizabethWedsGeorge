@@ -20,3 +20,8 @@ class Gift(models.Model):
     currency = models.CharField(max_length=10, null=True)
     mpesa_reference = models.CharField(max_length=100, null=True)
 
+class Error(models.Model):
+    time = models.DateTimeField(auto_now=True)
+    request = models.CharField(max_length=1000)
+    desciption = models.CharField(max_length=10000)
+

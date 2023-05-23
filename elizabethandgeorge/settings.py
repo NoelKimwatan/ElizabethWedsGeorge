@@ -32,13 +32,13 @@ if ENVIRONMENT == 'production':
     from elizabethandgeorge.settings_production import private_ip
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 if ENVIRONMENT == 'local':
     ALLOWED_HOSTS = ['localhost','27b4-41-90-70-251.ngrok-free.app']
 elif ENVIRONMENT == 'production':
-    ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','172.31.16.5','elizabethgeorge.zitto.co.ke',private_ip, '3.248.135.207', '52.30.243.159']
+    ALLOWED_HOSTS = ['prod-env.eba-fc7hmtbi.eu-west-1.elasticbeanstalk.com','172.31.16.5','elizabethgeorge.zitto.co.ke',private_ip, '3.248.135.207', '52.30.243.159', '172.31.30.23']
 
 # Application definition
 
@@ -131,7 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Africa/Nairobi"
 
 USE_I18N = True
 
@@ -197,3 +197,4 @@ STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 SUPERUSER_USERNAME = os.environ['SUPERUSER_USERNAME']
 SUPERUSER_EMAIL = os.environ['SUPERUSER_EMAIL']
 SUPERUSER_PASSWORD = os.environ['SUPERUSER_PASSWORD']
+

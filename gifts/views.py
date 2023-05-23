@@ -412,95 +412,22 @@ def generate_authentication_token():
     request_response = requests.post(pesapal_authentication_url, headers=request_headers, data=json.dumps(request_payload)).json()
     return request_response
 
-def process_payment(request):
-    if request.method == "POST":
-        customer_fname = request.POST["fname"]
-        customer_lname = request.POST["lname"]
-        customer_phone = request.POST["phone"]
-        customer_email = request.POST["email"]
-        message = request.POST["message"]
-        print("Message to the couple: ",message)
-        constribution_amount = request.POST["amount"]
+def error505(request):
+    dcjwkcjwpcw
 
-        gift_object = Gift(
-            phone_no = customer_phone,
-            amount =  constribution_amount,
-        )
-        gift_object.save()
 
-        request_response = generate_authentication_token()
+def handle_error_view(request, *args, **argsv):
+    print("An error has occured")
+    print("Exception 1: ",args)
+    print("Exception 2: ",argsv)
+    print("Request",request)
+    error_object = Error.objects.create(
+        request = request
+    )
+    error_object.save()
+    return render(request, 'customErrorPage.html')
 
-        if request_response['status'] == '200':
-            authentication_token = request_response['token']
-            # print("Authentication token: ",authentication_token)
-
-            authorization_token = "Bearer {}".format(authentication_token)
-
-            ipn_registration_header = {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": authorization_token
-            }
-
-            ipn_registration_body = {
-                "url": PESAPAL_RESPONSE_URL,
-                "ipn_notification_type": "POST"
-            }
-
-            ipn_registration =requests.post(settings.PESAPAL_IPN_REGISTRATION_URL,headers = ipn_registration_header, data=json.dumps(ipn_registration_body)).json()
-            print("IPN regsitration response: ",ipn_registration)
-
-            ipn_id = ipn_registration["ipn_id"]
-            gift_object.ipn_id = ipn_id
-            gift_object.save()
-
-            # print("IPN registration id: ",ipn_id)
-
-            order_request_customer_address = {
-                "first_name": customer_fname,
-                "last_name": customer_lname,
-                "email_address": customer_email,
-                "phone_number": customer_phone
-            }
-
-            try:
-                print("Gift object id ",gift_object.id);
-            except:
-                pass
-
-            unique_id = random.randint(1,999999999999999999999999999999999) + 498656259
-            print("Unique order id: ",unique_id)
-
-            order_request_payload = {
-                "id": unique_id ,
-                "currency": "KES",
-                "amount": constribution_amount,
-                "description": "Elizabeth weds George",
-                "callback_url": PESAPAL_REDIRECT_URL,
-                "notification_id": ipn_id,
-                "billing_address": order_request_customer_address
-            }
-
-            order_request_headers = {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": authorization_token
-            }
-
-            order_request = requests.post(settings.PESAPAL_ORDER_REQUEST_URL,headers = order_request_headers, data=json.dumps(order_request_payload)).json()
-            
-
-            print("--------------------------------------------------------------------------------------------------------------------------------------")
-            print("Order request response: ",order_request)
-            print("--------------------------------------------------------------------------------------------------------------------------------------")
-            redirect_url = order_request['redirect_url']
-            order_tracking_id = order_request['order_tracking_id']
-
-            gift_object.order_tracking_id = order_tracking_id
-            gift_object.save()
-
-            context = {"redirect_url": redirect_url }
-            return render(request, "gifts/processing_payments.html",context)
-    else:
-        pass
+def handle_400_error_view(request,exception):
+    print("An error has occured")
+    print("Exception: ",exception)
+    return render(request, 'custom404Page.html')
