@@ -254,7 +254,7 @@ def gift_message(request):
 def mpesa_notification(request):
     if request.method == "POST":
         data = json.loads(request.body)
-        print(data["Body"])
+        print("Mpesa response body: ",data["Body"])
         CheckoutId = data["Body"]["stkCallback"]["CheckoutRequestID"]
         ResultsCode = data["Body"]["stkCallback"]["ResultCode"]
 
